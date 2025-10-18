@@ -61,15 +61,15 @@ jobs:
     - name: 创建压缩包
       run: |
         cd release
-        tar -a -c -f IPTV_Scanner.zip IPTV_Scanner.exe config.json
-        move IPTV_Scanner.zip ..
+        tar -a -c -f iptv_scanner_JSON.zip IPTV_Scanner.exe config.json
+        move iptv_scanner_JSON.zip ..
       shell: cmd
     
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: IPTV_Scanner
-        path: IPTV_Scanner.zip
+        name: iptv_scanner_JSON
+        path: iptv_scanner_JSON.zip
     
     - name: 创建 Release
       if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
@@ -81,7 +81,7 @@ jobs:
         prerelease: false
         make_latest: true
         files: |
-          IPTV_Scanner.zip
+          iptv_scanner_JSON.zip
         body: |
           ## 🚀 IPTV Scanner JSON
           
@@ -91,7 +91,7 @@ jobs:
           - 📦 体积更小
           
           ### 📥 使用方法
-          1. 下载 `IPTV_Scanner.zip` 压缩包
+          1. 下载 `iptv_scanner_JSON.zip` 压缩包
           2. 解压到任意目录
           3. 双击运行 `IPTV_Scanner.exe`
           
