@@ -1,4 +1,4 @@
-name: IPTV Scanner checklist
+name: Build IPTV Scanner checklist
 
 on:
   push:
