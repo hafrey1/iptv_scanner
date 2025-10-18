@@ -1,0 +1,45 @@
+{
+  "scan_settings": {
+    "timeout": 1.5,
+    "max_concurrent": 500,
+    "test_timeout": 8,
+    "download_segments": 3,
+    "worker_threads": 10
+  },
+  "output_settings": {
+    "results_per_channel": 1,
+    "speed_file": "speed_results.txt",
+    "txt_file": "itvlist.txt",
+    "m3u_file": "itvlist.m3u"
+  },
+  "channel_categories": {
+    "cctv": "央视频道",
+    "satellite": "卫视频道",
+    "other": "其他频道"
+  },
+  "name_replacements": {
+    "cctv": "CCTV",
+    "中央": "CCTV",
+    "央视": "CCTV",
+    "高清": "",
+    "超高": "",
+    "HD": "",
+    "标清": "",
+    "频道": "",
+    "-": "",
+    " ": "",
+    "PLUS": "+",
+    "＋": "+",
+    "(": "",
+    ")": ""
+  },
+  "scan_urls": [
+    "http://1.87.218.1:8181",
+    "http://1.195.130.1:8181",
+    "http://1.195.131.1:8181",
+    "http://1.197.250.1:8181",
+    "http://39.152.171.1:8181",
+    "http://47.109.181.1:8282",
+    "http://47.116.70.1:8282"
+  ]
+}
