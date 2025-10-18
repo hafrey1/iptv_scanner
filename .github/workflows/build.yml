@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Nuitka 编译 - 高性能优化版
+    name: Build IPTV Scanner
     runs-on: windows-latest
     
     steps:
