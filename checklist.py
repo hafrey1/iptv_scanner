@@ -984,40 +984,28 @@ async def main():
 
     open(path, "w", encoding="utf-8").write(cnt)
 
-def main():
-    global all_results
-    
+def main_with_ui():
+    """带控制台界面的主函数"""
     print("=" * 60)
     print("IPTV 频道扫描和测速工具")
     print("=" * 60)
     print(f"加载配置文件成功，共 {len(urls)} 个扫描地址")
     print("=" * 60)
     
-    print("\n第一阶段：扫描频道...")
-    all_results = asyncio.run(scan_channels())
-    print(f"\n扫描完成！找到 {len(all_results)} 个频道")
+    print("\n开始执行频道检测...")
+    print("这可能需要较长时间，请耐心等待...\n")
     
-    if len(all_results) == 0:
-        print("未找到任何频道，程序退出")
-        input("按任意键退出...")
-        return
-    
-    print("\n第二阶段：测速和生成播放列表...")
-    test_and_save()
+    # 调用主函数
+    asyncio.run(main())
     
     print("\n" + "=" * 60)
     print("任务完成！")
-    print(f"可用频道数：{len(results)}")
-    print(f"生成文件：")
-    print(f"  - {output_settings['speed_file']}")
-    print(f"  - {output_settings['txt_file']}")
-    print(f"  - {output_settings['m3u_file']}")
     print("=" * 60)
     input("\n按任意键退出...")
 
 if __name__ == "__main__":
     try:
-        main()
+        main_with_ui()
     except KeyboardInterrupt:
         print("\n\n用户中断程序")
         input("按任意键退出...")
