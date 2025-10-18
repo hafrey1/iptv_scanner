@@ -50,8 +50,6 @@ jobs:
             --output-filename=CheckList.exe ^
             --company-name="IPTV Tools" ^
             --product-name="IPTV CheckList" ^
-            --file-version=1.0.0 ^
-            --product-version=1.0.0 ^
             --file-description="高性能 IPTV 频道检测工具" ^
             --enable-plugin=numpy ^
             --follow-imports ^
@@ -92,7 +90,7 @@ jobs:
           files: |
             release/CheckList.exe
           body: |
-            ## 🚀 IPTV CheckList - Nuitka 优化版
+            ## 🚀 IPTV CheckList
             
             ### ⭐ 版本特性
             ⚡ 运行性能提升 30-70%
