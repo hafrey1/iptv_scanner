@@ -40,7 +40,14 @@ jobs:
     
     - name: 编译程序
       run: |
-        pyinstaller --onefile --name="IPTV_Scanner" iptv_scanner.py
+        pyinstaller --onefile ^
+                    --name="IPTV_Scanner" ^
+                    --hidden-import=eventlet.hubs.epolls ^
+                    --hidden-import=eventlet.hubs.kqueue ^
+                    --hidden-import=eventlet.hubs.selects ^
+                    --hidden-import=dns.resolver ^
+                    --hidden-import=dns.asyncresolver ^
+                    iptv_scanner.py
       shell: cmd
     
     - name: 准备发布文件
