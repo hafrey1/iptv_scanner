@@ -1,4 +1,4 @@
-name: Build IPTV Scanner (Nuitka)
+name: Build IPTV Scanner checklist
 
 on:
   push:
