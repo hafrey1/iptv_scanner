@@ -1,4 +1,4 @@
-name: Build IPTV Scanner checklist
+name: IPTV Scanner checklist
 
 on:
   push:
@@ -12,14 +12,14 @@ on:
         type: boolean
         default: true
       version:
-        description: '版本号 (例如: 1.0.0)'
+        description: '版本号 (例如: 3.0.0)'
         required: true
         type: string
-        default: '1.0.0'
+        default: '3.0.0'
 
 jobs:
   build:
-    name: Nuitka 编译
+    name: IPTV Scanner checklist
     runs-on: windows-latest
     permissions:
       contents: write
