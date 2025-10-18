@@ -47,15 +47,14 @@ jobs:
         nuitka --standalone --onefile ^
                --assume-yes-for-downloads ^
                --windows-console-mode=attach ^
-               --output-filename=IPTV_Scanner.exe ^
-               iptv_scanner.py
+               --output-filename=iptv_scanner.exe ^
+               checklist.py
       shell: cmd
     
     - name: 准备发布文件
       run: |
         mkdir release
-        copy IPTV_Scanner.exe release\
-        copy config.json release\
+        copy iptv_scanner.exe release\
       shell: cmd
     
     - name: 创建压缩包
@@ -81,7 +80,7 @@ jobs:
         prerelease: false
         make_latest: true
         files: |
-          IPTV_Scanner.zip
+          IPTV Scanner.zip
         body: |
           ## 🚀 IPTV Scanner (Nuitka 优化版)
           
@@ -91,9 +90,9 @@ jobs:
           - 📦 体积更小
           
           ### 📥 使用方法
-          1. 下载 `IPTV_Scanner.zip` 压缩包
+          1. 下载 `IPTV Scanner.zip` 压缩包
           2. 解压到任意目录
-          3. 双击运行 `IPTV_Scanner.exe`
+          3. 双击运行 `IPTV Scanner.exe`
           
           ### ⚙️ 配置说明
           编辑 `config.json` 可自定义扫描参数和 URL 列表
