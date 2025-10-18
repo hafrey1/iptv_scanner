@@ -43,11 +43,25 @@ jobs:
         pyinstaller --onefile --name="IPTV_Scanner" iptv_scanner.py
       shell: cmd
     
+    - name: 准备发布文件
+      run: |
+        mkdir release
+        copy dist\IPTV_Scanner.exe release\
+        copy config.json release\
+      shell: cmd
+    
+    - name: 创建压缩包
+      run: |
+        cd release
+        tar -a -c -f IPTV_Scanner.zip IPTV_Scanner.exe config.json
+        move IPTV_Scanner.zip ..
+      shell: cmd
+    
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
         name: IPTV_Scanner
-        path: dist/IPTV_Scanner.exe
+        path: IPTV_Scanner.zip
     
     - name: 创建 Release
       if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
@@ -59,15 +73,18 @@ jobs:
         prerelease: false
         make_latest: true
         files: |
-          dist/IPTV_Scanner.exe
-          config.json
+          IPTV_Scanner.zip
         body: |
           ## 🚀 IPTV Scanner
           
           ### 📥 使用方法
-          1. 下载 `IPTV_Scanner.exe` 和 `config.json`
-          2. 将两个文件放在同一目录
+          1. 下载 `IPTV_Scanner.zip` 压缩包
+          2. 解压到任意目录
           3. 双击运行 `IPTV_Scanner.exe`
+          
+          ### 📦 包含文件
+          - `IPTV_Scanner.exe` - 主程序
+          - `config.json` - 配置文件
           
           ### ⚙️ 配置说明
           编辑 `config.json` 可自定义扫描参数和 URL 列表
