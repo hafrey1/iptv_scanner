@@ -82,7 +82,7 @@ jobs:
         files: |
           IPTV Scanner.zip
         body: |
-          ## 🚀 IPTV Scanner (Nuitka 优化版)
+          ## 🚀 IPTV Scanner (checklist)
           
           ### ✨ 性能特点
           - ⚡ 启动速度快 2-3 倍
@@ -93,8 +93,5 @@ jobs:
           1. 下载 `IPTV Scanner.zip` 压缩包
           2. 解压到任意目录
           3. 双击运行 `IPTV Scanner.exe`
-          
-          ### ⚙️ 配置说明
-          编辑 `config.json` 可自定义扫描参数和 URL 列表
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
