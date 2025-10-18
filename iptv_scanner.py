@@ -441,5 +441,33 @@ async def main():
                     file.write(f"{channel_url}\n")
                     channel_counters[channel_name] = 1
 
-if __name__ == "__main__":
+def main_with_ui():
+    """带控制台界面的主函数"""
+    print("=" * 60)
+    print("IPTV 频道扫描和测速工具")
+    print("=" * 60)
+    print(f"加载配置文件成功，共 {len(urls)} 个扫描地址")
+    print("=" * 60)
+    
+    print("\n开始执行频道检测...")
+    print("这可能需要较长时间，请耐心等待...\n")
+    
+    # 调用主函数
     asyncio.run(main())
+    
+    print("\n" + "=" * 60)
+    print("任务完成！")
+    print("=" * 60)
+    input("\n按任意键退出...")
+
+if __name__ == "__main__":
+    try:
+        main_with_ui()
+    except KeyboardInterrupt:
+        print("\n\n用户中断程序")
+        input("按任意键退出...")
+    except Exception as e:
+        print(f"\n发生错误：{e}")
+        import traceback
+        traceback.print_exc()
+        input("按任意键退出...")
