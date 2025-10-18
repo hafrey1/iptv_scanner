@@ -1,14 +1,25 @@
-name: Build IPTV Scanner
+name: Build IPTV Scanner (Nuitka 优化版)
 
 on:
   push:
     tags:
       - 'v*'  # 当推送 v 开头的标签时触发
   workflow_dispatch:  # 允许手动触发
+    inputs:
+      create_release:
+        description: '是否创建 Release'
+        required: true
+        type: boolean
+        default: true
+      version:
+        description: '版本号 (例如: 1.0.0)'
+        required: true
+        type: string
+        default: '1.0.0'
 
 jobs:
   build:
-    name: Build IPTV Scanner
+    name: Nuitka 编译 - 高性能优化版
     runs-on: windows-latest
     
     steps:
@@ -50,9 +61,11 @@ jobs:
         path: IPTV_Scanner.exe
     
     - name: 创建 Release
-      if: startsWith(github.ref, 'refs/tags/')
+      if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ github.ref_name != '' && github.ref_name || format('v{0}', inputs.version) }}
+        name: ${{ github.ref_name != '' && github.ref_name || format('Release v{0}', inputs.version) }}
         files: |
           IPTV_Scanner.exe
           config.json
