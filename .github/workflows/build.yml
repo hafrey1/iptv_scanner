@@ -21,6 +21,8 @@ jobs:
   build:
     name: PyInstaller 编译
     runs-on: windows-latest
+    permissions:
+      contents: write
     
     steps:
     - name: 检出代码
