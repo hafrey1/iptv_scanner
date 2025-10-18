@@ -32,6 +32,7 @@ jobs:
     - name: 编译程序 (Nuitka)
       run: |
         nuitka --standalone --onefile ^
+               --assume-yes-for-downloads ^
                --windows-console-mode=attach ^
                --output-filename=IPTV_Scanner.exe ^
                --company-name="IPTV Tools" ^
@@ -39,7 +40,6 @@ jobs:
                --file-version=1.0.0 ^
                --product-version=1.0.0 ^
                --file-description="高性能 IPTV 频道扫描工具" ^
-               --enable-plugin=anti-bloat ^
                iptv_scanner.py
       shell: cmd
     
