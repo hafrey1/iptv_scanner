@@ -55,13 +55,12 @@ jobs:
       run: |
         mkdir release
         copy IPTV_Scanner.exe release\
-        copy config.json release\
       shell: cmd
     
     - name: 创建压缩包
       run: |
         cd release
-        tar -a -c -f IPTV_Scanner.zip IPTV_Scanner.exe config.json
+        tar -a -c -f IPTV_Scanner.zip IPTV_Scanner.exe
         move IPTV_Scanner.zip ..
       shell: cmd
     
