@@ -1,10 +1,10 @@
-name: Build IPTV Scanner
+name: Build IPTV Scanner (双版本编译)
 
 on:
   push:
     tags:
-      - 'v*'  # 当推送 v 开头的标签时触发
-  workflow_dispatch:  # 允许手动触发
+      - 'v*'
+  workflow_dispatch:
     inputs:
       create_release:
         description: '是否创建 Release'
@@ -18,8 +18,40 @@ on:
         default: '1.0.0'
 
 jobs:
-  build:
-    name: Build IPTV Scanner
+  build-pyinstaller:
+    name: PyInstaller 编译 - 标准版
+    runs-on: windows-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 设置 Python 环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller aiohttp requests eventlet
+    
+    - name: 编译程序 (PyInstaller)
+      run: |
+        pyinstaller --onefile ^
+                    --name="IPTV_Scanner" ^
+                    iptv_scanner.py
+      shell: cmd
+      continue-on-error: true
+    
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: IPTV_Scanner_PyInstaller
+        path: dist/IPTV_Scanner.exe
+
+  build-nuitka:
+    name: Nuitka 编译 - 优化版
     runs-on: windows-latest
     
     steps:
@@ -45,7 +77,7 @@ jobs:
         nuitka --standalone --onefile ^
                --assume-yes-for-downloads ^
                --windows-console-mode=attach ^
-               --output-filename=IPTV_Scanner.exe ^
+               --output-filename=IPTV_Scanner_Optimized.exe ^
                --company-name="IPTV Tools" ^
                --product-name="IPTV Scanner" ^
                --file-version=1.0.0 ^
@@ -58,32 +90,83 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: IPTV_Scanner_Nuitka
-        path: IPTV_Scanner.exe
+        path: IPTV_Scanner_Optimized.exe
+
+  create-release:
+    name: 创建 Release
+    needs: [build-pyinstaller, build-nuitka]
+    runs-on: ubuntu-latest
+    if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 下载 PyInstaller 编译产物
+      uses: actions/download-artifact@v4
+      with:
+        name: IPTV_Scanner_PyInstaller
+        path: ./release
+      continue-on-error: true
+    
+    - name: 下载 Nuitka 编译产物
+      uses: actions/download-artifact@v4
+      with:
+        name: IPTV_Scanner_Nuitka
+        path: ./release
+    
+    - name: 重命名文件
+      run: |
+        cd release
+        if [ -f "IPTV_Scanner.exe" ]; then
+          mv IPTV_Scanner.exe IPTV_Scanner_Standard.exe
+        fi
+        ls -lh
+      shell: bash
     
     - name: 创建 Release
-      if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name != '' && github.ref_name || format('v{0}', inputs.version) }}
         name: ${{ github.ref_name != '' && github.ref_name || format('Release v{0}', inputs.version) }}
         files: |
-          IPTV_Scanner.exe
+          release/IPTV_Scanner_Standard.exe
+          release/IPTV_Scanner_Optimized.exe
           config.json
         body: |
-          ## 🚀 高性能优化版 (Nuitka 编译)
+          ## 🚀 IPTV Scanner - 双版本发布
           
-          ### ✨ 性能提升
+          ### 📦 版本说明
+          
+          **标准版 (PyInstaller)** - `IPTV_Scanner_Standard.exe`
+          - ✅ 兼容性最好，稳定可靠
+          - ✅ 编译速度快（约 2-3 分钟）
+          - ⚠️ 体积较大（约 15-20 MB）
+          - ⚠️ 启动稍慢
+          
+          **优化版 (Nuitka)** - `IPTV_Scanner_Optimized.exe` ⭐ 推荐
           - ⚡ 启动速度提升 2-3 倍
           - 🚄 运行性能提升 30-70%
-          - 📦 体积减小 40-60%
+          - 📦 体积减小 40-60%（约 8-12 MB）
           - 🔒 代码编译保护
+          - 💾 内存使用更优化
           
           ### 📥 使用方法
-          1. 下载 `IPTV_Scanner.exe` 和 `config.json`
-          2. 将两个文件放在同一目录
-          3. 双击运行 `IPTV_Scanner.exe`
+          1. 根据需要下载对应版本的 exe 文件
+          2. 下载 `config.json` 配置文件
+          3. 将 exe 和 config.json 放在同一目录
+          4. 双击运行 exe 文件
           
           ### ⚙️ 配置说明
-          编辑 `config.json` 可自定义扫描参数和 URL 列表
+          编辑 `config.json` 可自定义：
+          - 扫描超时时间和并发数
+          - URL 扫描列表
+          - 输出文件格式和名称
+          - 频道名称替换规则
+          
+          ### 💡 选择建议
+          - **日常使用**：推荐优化版（更快更小）
+          - **兼容性优先**：选择标准版
+          - **不确定**：两个都试试，看哪个更适合你
       env:
         GITHUB_TOKEN: $ secrets.GITHUB_TOKEN 
