@@ -72,4 +72,4 @@ jobs:
           ### ⚙️ 配置说明
           编辑 `config.json` 可自定义扫描参数和 URL 列表
       env:
-        GITHUB_TOKEN: $ secrets.GITHUB_TOKEN   
+        GITHUB_TOKEN: $ secrets.GITHUB_TOKEN
