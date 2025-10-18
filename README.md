@@ -1,5 +1,8 @@
 # iptv_scanner
 
+https://github.com/mzky/checklist
+
+
 ## 🚀 快速开始
 
 ### 方法一：直接运行 Python 脚本
