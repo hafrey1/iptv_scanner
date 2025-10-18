@@ -1,20 +1,22 @@
 @echo off
+chcp 65001 >nul
 echo ================================
-echo IPTV Scanner 打包工具
+echo IPTV Scanner Build Tool (Nuitka)
 echo ================================
 echo.
 
-echo 正在安装依赖...
-pip install pyinstaller aiohttp requests eventlet
+echo Installing dependencies...
+pip install nuitka ordered-set zstandard
+pip install aiohttp requests eventlet
 
 echo.
-echo 正在打包程序...
-pyinstaller --onefile --name="IPTV_Scanner" iptv_scanner.py
+echo Building optimized executable (this may take 5-10 minutes)...
+nuitka --standalone --onefile --assume-yes-for-downloads --windows-console-mode=attach --output-filename=IPTV_Scanner.exe iptv_scanner.py
 
 echo.
 echo ================================
-echo 打包完成！
-echo 可执行文件位于: dist\IPTV_Scanner.exe
-echo 请将 config.json 复制到 exe 同目录
+echo Build completed!
+echo EXE location: IPTV_Scanner.exe
+echo Please copy config.json to the same directory
 echo ================================
 pause
