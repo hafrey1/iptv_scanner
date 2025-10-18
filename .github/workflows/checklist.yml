@@ -18,107 +18,80 @@ on:
         default: '3.0.0'
 
 jobs:
-  build-nuitka:
-    name: IPTV Scanner checklist
+  build:
+    name: iptv_scanner_checklist
     runs-on: windows-latest
+    permissions:
+      contents: write
     
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-      
-      - name: 设置 Python 环境
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      
-      - name: 安装 C 编译器
-        uses: ilammy/msvc-dev-cmd@v1
-        continue-on-error: true
-      
-      - name: 安装依赖
-        run: |
-          python -m pip install --upgrade pip
-          pip install nuitka ordered-set zstandard
-          pip install aiohttp numpy
-        shell: cmd
-      
-      - name: 编译程序 (Nuitka)
-        run: |
-          nuitka --standalone --onefile ^
-            --assume-yes-for-downloads ^
-            --windows-console-mode=attach ^
-            --output-filename=CheckList.exe ^
-            --company-name="IPTV Tools" ^
-            --product-name="IPTV CheckList" ^
-            --file-description="高性能 IPTV 频道检测工具" ^
-            --enable-plugin=numpy ^
-            --follow-imports ^
-            --nofollow-import-to=tkinter ^
-            --nofollow-import-to=matplotlib ^
-            checklist.py
-        shell: cmd
-        continue-on-error: false
-      
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: CheckList_Windows_x64
-          path: CheckList.exe
-          retention-days: 90
-
-  create-release:
-    name: 创建 Release
-    needs: [build-nuitka]
-    runs-on: ubuntu-latest
-    if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
+    - name: 检出代码
+      uses: actions/checkout@v4
     
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-      
-      - name: 下载编译产物
-        uses: actions/download-artifact@v4
-        with:
-          name: CheckList_Windows_x64
-          path: ./release
-      
-      - name: 创建 Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name != '' && github.ref_name || format('v{0}', inputs.version) }}
-          name: ${{ github.ref_name != '' && github.ref_name || format('Release v{0}', inputs.version) }}
-          files: |
-            release/CheckList.exe
-          body: |
-            ## 🚀 IPTV CheckList
-            
-            ### ⭐ 版本特性
-            ⚡ 运行性能提升 30-70%
-            🚄 启动速度提升 2-3 倍
-            📦 体积优化（约 12-18 MB）
-            🔒 代码编译保护
-            💾 内存使用更优化
-            
-            ### 📥 使用方法
-            1. 下载 `CheckList.exe`
-            2. 确保脚本依赖的配置文件在同一目录
-            3. 双击运行即可
-            
-            ### 🔍 功能说明
-            - 自动扫描 IPTV 频道源
-            - TS 流稳定性检测
-            - 响应时间测试
-            - 生成 M3U 播放列表
-            - 自动更新 README 统计信息
-            
-            ### ⚙️ 系统要求
-            - Windows 10 或更高版本（x64）
-            - 无需安装 Python 环境
-            
-            ### 📝 配置说明
-            程序会自动检测以下目录：
-            - 输出文件：`itvlist.m3u`
-            - 日志更新：`./checklist/README.md`
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-
+    - name: 设置 Python 环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: 安装 C 编译器
+      uses: ilammy/msvc-dev-cmd@v1
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install nuitka ordered-set zstandard
+        pip install aiohttp requests eventlet
+    
+    - name: 编译程序
+      run: |
+        nuitka --standalone --onefile ^
+               --assume-yes-for-downloads ^
+               --windows-console-mode=attach ^
+               --output-filename=IPTV_Scanner.exe ^
+               checklist.py
+      shell: cmd
+    
+    - name: 准备发布文件
+      run: |
+        mkdir release
+        copy IPTV_Scanner.exe release\
+      shell: cmd
+    
+    - name: 创建压缩包
+      run: |
+        cd release
+        tar -a -c -f IPTV_Scanner.zip IPTV_Scanner.exe
+        move IPTV_Scanner.zip ..
+      shell: cmd
+    
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: IPTV_Scanner
+        path: IPTV_Scanner.zip
+    
+    - name: 创建 Release
+      if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', inputs.version) }}
+        name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Release v{0}', inputs.version) }}
+        draft: false
+        prerelease: false
+        make_latest: true
+        files: |
+          IPTV_Scanner.zip
+        body: |
+          ## 🚀 IPTV Scanner checklist
+          
+          ### ✨ 性能特点
+          - ⚡ 启动速度快 2-3 倍
+          - 🚄 运行性能提升 30-70%
+          - 📦 体积更小
+          
+          ### 📥 使用方法
+          1. 下载 `IPTV_Scanner.zip` 压缩包
+          2. 解压到任意目录
+          3. 双击运行 `IPTV_Scanner.exe`
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
