@@ -53,8 +53,11 @@ jobs:
       if: (startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref_name != '' && github.ref_name || format('v{0}', inputs.version) }}
-        name: ${{ github.ref_name != '' && github.ref_name || format('Release v{0}', inputs.version) }}
+        tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', inputs.version) }}
+        name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Release v{0}', inputs.version) }}
+        draft: false
+        prerelease: false
+        make_latest: true
         files: |
           dist/IPTV_Scanner.exe
           config.json
